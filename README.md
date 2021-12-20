@@ -12,13 +12,13 @@ This application when finished will allow companies to process warranty registra
 7. Maybe host it on an actual server either on AWS or Azure and make it available to the public
 
 ### Things done today because i had to work on a new computer:
-Installed SQL server express and SQL server managment studio (SSMS) on local machine
+Installed SQL server express and SQL server management studio (SSMS) on local machine
 
 installed ASP.NET Core Hosting Bundle
 
 Installed and Setup IIS server on my local machine
 
-Deployed to IIS server and Connnect application to SQL server
+Deployed to IIS server and connected application to SQL server
 
 
 ### Running Migrations
