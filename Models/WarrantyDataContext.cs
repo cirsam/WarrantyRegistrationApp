@@ -10,7 +10,7 @@ namespace WarrantyRegistrationApp.Models
     public class WarrantyDataContext:DbContext
     {
         public WarrantyDataContext(DbContextOptions<WarrantyDataContext> options)
-    : base(options)
+        : base(options)
         {
         }
 
