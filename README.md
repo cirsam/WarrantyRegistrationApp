@@ -1,6 +1,6 @@
 # Warranty Registration App
 
-**Description**
+**Description**: 
 This application when finished will allow companies to process warranty registration from remote locations or integrate it into their existing web applications with RESTFUL API.
 
 ## Project Outline:
