@@ -16,3 +16,11 @@ Installed SQL server express and SQL server managment studio (SSMS) on local mac
 installed ASP.NET Core Hosting Bundle
 Installed and Setup IIS server on my local machine
 Deployed to IIS server and Connnect application to SQL server
+
+
+### Running Migrations
+To add-Migrations
+Add-Migration DataModels -context WarrantyDataContext
+
+And Update Database
+Update-Database -context WarrantyDataContext
