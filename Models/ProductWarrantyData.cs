@@ -12,7 +12,6 @@ namespace WarrantyRegistrationApp.Models
         public int ProdWarrantyId { get; set; }
         public int CustomerId { get; set; }
         public int ProductId { get; set; }
-        public int ProductSerialNumber { get; set; }
-
+        public string ProductSerialNumber { get; set; }
     }
 }
