@@ -1,7 +1,11 @@
-﻿{
+{
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "https://localhost/WarrantyRegistration",
+      "sslPort": 0
+    },
     "iisExpress": {
       "applicationUrl": "http://localhost:38516",
       "sslPort": 44357
@@ -18,13 +22,23 @@
     },
     "WarrantyRegistrationApp": {
       "commandName": "Project",
-      "dotnetRunMessages": "true",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation"
-      }
+      },
+      "dotnetRunMessages": "true",
+      "applicationUrl": "https://localhost:5001;http://localhost:5000"
+    },
+    "IIS Local": {
+      "commandName": "IIS",
+      "workingDirectory": "C:\\Users\\cirsa\\source\\repos\\WarrantyRegistrationApp",
+      "launchBrowser": true,
+      "launchUrl": "https://localhost/WarrantyRegistration",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "sqlDebugging": true
     }
   }
 }
