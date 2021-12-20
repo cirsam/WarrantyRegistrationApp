@@ -27,3 +27,5 @@ To add-Migrations
 
 To Update Database
 - Update-Database -context WarrantyDataContext
+
+The unit test for the project can be found here https://github.com/cirsam/WarrantyRegUnitTest
