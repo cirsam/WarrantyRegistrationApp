@@ -13,14 +13,17 @@ This application when finished will allow companies to process warranty registra
 
 ### Things done today because i had to work on a new computer:
 Installed SQL server express and SQL server managment studio (SSMS) on local machine
+
 installed ASP.NET Core Hosting Bundle
+
 Installed and Setup IIS server on my local machine
+
 Deployed to IIS server and Connnect application to SQL server
 
 
 ### Running Migrations
 To add-Migrations
-Add-Migration DataModels -context WarrantyDataContext
+- Add-Migration DataModels -context WarrantyDataContext
 
-And Update Database
-Update-Database -context WarrantyDataContext
+To Update Database
+- Update-Database -context WarrantyDataContext
