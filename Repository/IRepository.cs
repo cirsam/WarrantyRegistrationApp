@@ -11,8 +11,12 @@ namespace WarrantyRegistrationApp.Repository
         IEnumerable<TEntity> GetAll();
         Task<ActionResult<IEnumerable<TEntity>>> GetAllAsync();
         TEntity GetByID(int? id);
+        Task<TEntity> GetByIDAsync(int? id);
+        Task<bool> IsExistsAsync(int? id);
         void Insert(TEntity entity);
+        Task InsertAsync(TEntity entity);
         void Update(TEntity entityToUpdate);
+        Task UpdateAsync(TEntity entityToUpdate);
         void Dispose();
     }
 }
