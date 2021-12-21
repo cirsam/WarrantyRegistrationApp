@@ -38,10 +38,33 @@ namespace WarrantyRegistrationApp.Repository
             return _dbSet.Find(id);
         }
 
+        public virtual async Task<TEntity> GetByIDAsync(int? id)
+        {
+            return await _dbSet.FindAsync(id);
+        }
+
+        public async Task<bool> IsExistsAsync(int? id)
+        {
+            var entiy = await _dbSet.FindAsync(id);
+
+            if (entiy.Equals(null))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public virtual void Insert(TEntity entity)
         {
             _dbSet.Add(entity);
             _context.SaveChanges();
+        }
+
+        public virtual async Task InsertAsync(TEntity entity)
+        {
+            _dbSet.Add(entity);
+            await _context.SaveChangesAsync();
         }
 
         public virtual void Delete(int? id)
@@ -65,6 +88,12 @@ namespace WarrantyRegistrationApp.Repository
             _dbSet.Attach(entityToUpdate);
             _context.Entry(entityToUpdate).State = EntityState.Modified;
             _context.SaveChanges();
+        }
+
+        public virtual async Task UpdateAsync(TEntity entity)
+        {
+            _context.Entry(entity).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
         }
 
         public void Dispose()
