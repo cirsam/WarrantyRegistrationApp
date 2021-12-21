@@ -10,9 +10,11 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using WarrantyRegistrationApp.Data;
 using WarrantyRegistrationApp.Models;
+using WarrantyRegistrationApp.Repository;
 
 namespace WarrantyRegistrationApp
 {
@@ -31,15 +33,21 @@ namespace WarrantyRegistrationApp
             services.AddDbContext<WarrantyDataContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDatabaseDeveloperPageExceptionFilter();
+
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+            
+            services.AddScoped<IRepository<Customer>, WarrantyRegistrationApp.Repository.Repository<Customer>>();
+            services.AddScoped<IRepository<Product>, WarrantyRegistrationApp.Repository.Repository<Product>>();
+            services.AddScoped<IRepository<ProductWarrantyData>, WarrantyRegistrationApp.Repository.Repository<ProductWarrantyData>>();
+
             services.AddControllersWithViews();
         }
 
