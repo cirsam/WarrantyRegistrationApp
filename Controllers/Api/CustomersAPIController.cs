@@ -55,7 +55,7 @@ namespace WarrantyRegistrationApp.Controllers.Api
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (! await CustomerExists(id))
+                if (! await WarrantyItemIsExists(id))
                 {
                     return NotFound();
                 }
@@ -92,7 +92,7 @@ namespace WarrantyRegistrationApp.Controllers.Api
             return NoContent();
         }
 
-        private async Task<bool> CustomerExists(int id)
+        private async Task<bool> WarrantyItemIsExists(int id)
         {
             return await _repository.IsExistsAsync(id);
         }
