@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WarrantyRegistrationApp.Models;
 
 namespace WarrantyRegistrationApp.Migrations
 {
     [DbContext(typeof(WarrantyDataContext))]
-    partial class WarrantyDataContextModelSnapshot : ModelSnapshot
+    [Migration("20211222153548_CapitalizeWarrantyDate")]
+    partial class CapitalizeWarrantyDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

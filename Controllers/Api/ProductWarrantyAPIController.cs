@@ -54,7 +54,7 @@ namespace WarrantyRegistrationApp.Controllers.Api
         {
             if (await IsProductWarrantyValid(productWarrantyData))
             {
-                productWarrantyData.warrantyDate = DateTime.Now.AddYears(5);
+                productWarrantyData.WarrantyDate = DateTime.Now.AddYears(5);
                 await _repository.InsertAsync(productWarrantyData);
             }
             else
@@ -81,7 +81,7 @@ namespace WarrantyRegistrationApp.Controllers.Api
                 var prodWarrantyData = await _repository.GetBySerialNumberAsync(productWarrantyData.ProductSerialNumber);//validate serial number exists
                 
                 if (prodWarrantyData!=null && productWarrantyData.ProductSerialNumber == prodWarrantyData.FirstOrDefault().ProductSerialNumber) {
-                    productWarrantyData.warrantyDate = productWarrantyData.warrantyDate.AddYears(2);
+                    productWarrantyData.WarrantyDate = productWarrantyData.WarrantyDate.AddYears(2);
                     await _repository.UpdateAsync(productWarrantyData);
 
                     return CreatedAtAction("GetProductWarrantyData", new { id = productWarrantyData.ProdWarrantyId }, productWarrantyData);
@@ -117,52 +117,22 @@ namespace WarrantyRegistrationApp.Controllers.Api
             return false;
         }
 
-        //// PUT: api/ProductWarrantyAPI/5
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutProductWarrantyData(int id, ProductWarrantyData productWarrantyData)
-        //{
-        //    if (id != productWarrantyData.ProdWarrantyId)
-        //    {
-        //        return BadRequest();
-        //    }
 
-        //    _context.Entry(productWarrantyData).State = EntityState.Modified;
+        // DELETE: api/ProductWarrantyAPI/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProductWarrantyData(int id)
+        {
+            var productWarrantyData = await _repository.GetByIDAsync(id);
+            
+            if (productWarrantyData == null)
+            {
+                return NotFound();
+            }
 
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!ProductWarrantyDataExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
+            _repository.Delete(productWarrantyData);
 
-        //    return NoContent();
-        //}
-
-        //// DELETE: api/ProductWarrantyAPI/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteProductWarrantyData(int id)
-        //{
-        //    var productWarrantyData = await _context.ProductWarrantyDatas.FindAsync(id);
-        //    if (productWarrantyData == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    _context.ProductWarrantyDatas.Remove(productWarrantyData);
-        //    await _context.SaveChangesAsync();
-
-        //    return NoContent();
-        //}
+            return NoContent();
+        }
 
         private async Task<bool> WarrantyItemIsExists(int id)
         {
