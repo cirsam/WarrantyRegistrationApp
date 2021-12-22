@@ -12,6 +12,7 @@ namespace WarrantyRegistrationApp.Repository
         Task<ActionResult<IEnumerable<TEntity>>> GetAllAsync();
         TEntity GetByID(int? id);
         Task<TEntity> GetByIDAsync(int? id);
+        Task<IEnumerable<TEntity>> GetBySerialNumberAsync(string serialNumber);
         Task<bool> IsExistsAsync(int? id);
         void Insert(TEntity entity);
         Task InsertAsync(TEntity entity);

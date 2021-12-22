@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using WarrantyRegistrationApp.Models;
 
@@ -41,6 +43,18 @@ namespace WarrantyRegistrationApp.Repository
         public virtual async Task<TEntity> GetByIDAsync(int? id)
         {
             return await _dbSet.FindAsync(id);
+        }
+        
+
+        public async Task<IEnumerable<TEntity>> GetBySerialNumberAsync(string serialNumber)
+        {
+            Type t = _dbSet.GetType();
+
+            PropertyInfo prop = t.GetProperty("ProductSerialNumber");
+
+            var list = prop.GetValue(_dbSet,null);
+
+            return await _dbSet.Where(a=>a.GetType().GetProperty("ProductSerialNumber").Equals(serialNumber)).ToListAsync();
         }
 
         public async Task<bool> IsExistsAsync(int? id)
