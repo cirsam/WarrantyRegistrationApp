@@ -29,3 +29,50 @@ To Update Database
 - Update-Database -context WarrantyDataContext
 
 The unit test for the project can be found here https://github.com/cirsam/WarrantyRegUnitTest
+
+
+
+## User stories
+
+As an Employee, I want to add a warranty so that the customer can receive service
+
+ 
+GIVEN a non-warrantied product
+
+WHEN valid warranty details are submitted
+
+THEN the product will be warrantied for 5 years from the purchase date
+
+ 
+
+GIVEN a non-warrantied product
+
+WHEN invalid warranty details including a non-existent customer id are submitted
+
+THEN the product will not be warrantied
+
+ 
+
+GIVEN a non-warrantied product
+
+WHEN invalid warranty details including a non-existent serial number are submitted
+
+THEN the product will not be warrantied
+
+ 
+
+GIVEN a non-warrantied product
+
+WHEN invalid warranty details including a non-unique serial number are submitted
+
+THEN the product will not be warrantied
+
+
+
+As a Employee, I want to extend a warranty so that the customer can continue to receive service
+
+GIVEN an existing product warranty
+
+WHEN the warranty is extended
+
+THEN the expiration date is extended by 2 years
