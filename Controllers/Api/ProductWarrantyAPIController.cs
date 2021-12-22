@@ -12,7 +12,7 @@ namespace WarrantyRegistrationApp.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductWarrantyAPIController : ControllerBase
+    public class ProductWarrantyAPIController : ControllerBase, IProductWarrantyAPIController
     {
         private readonly IRepository<ProductWarrantyData> _repository;
         private readonly IRepository<Customer> _repositoryCustomer;
@@ -45,6 +45,24 @@ namespace WarrantyRegistrationApp.Controllers.Api
             }
 
             return productWarrantyData;
+        }
+
+        // POST: api/ProductWarrantyAPI
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<ProductWarrantyData>> RegisterNewProductWarrantyData(ProductWarrantyData productWarrantyData)
+        {
+            if (await IsProductWarrantyValid(productWarrantyData))
+            {
+                productWarrantyData.warrantyDate = DateTime.Now.AddYears(5);
+                await _repository.InsertAsync(productWarrantyData);
+            }
+            else
+            {
+                return NoContent();
+            }
+
+            return CreatedAtAction("GetProductWarrantyData", new { id = productWarrantyData.ProdWarrantyId }, productWarrantyData);
         }
 
         public async Task<bool> IsProductWarrantyValid(ProductWarrantyData productWarrantyData)
