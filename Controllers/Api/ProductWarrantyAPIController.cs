@@ -118,21 +118,21 @@ namespace WarrantyRegistrationApp.Controllers.Api
         }
 
 
-        //// DELETE: api/ProductWarrantyAPI/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteProductWarrantyData(int id)
-        //{
-        //    var productWarrantyData = await _context.ProductWarrantyDatas.FindAsync(id);
-        //    if (productWarrantyData == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // DELETE: api/ProductWarrantyAPI/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProductWarrantyData(int id)
+        {
+            var productWarrantyData = await _repository.GetByIDAsync(id);
+            
+            if (productWarrantyData == null)
+            {
+                return NotFound();
+            }
 
-        //    _context.ProductWarrantyDatas.Remove(productWarrantyData);
-        //    await _context.SaveChangesAsync();
+            _repository.Delete(productWarrantyData);
 
-        //    return NoContent();
-        //}
+            return NoContent();
+        }
 
         private async Task<bool> WarrantyItemIsExists(int id)
         {
