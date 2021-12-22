@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WarrantyRegistrationApp.Models;
 
 namespace WarrantyRegistrationApp.Migrations
 {
     [DbContext(typeof(WarrantyDataContext))]
-    partial class WarrantyDataContextModelSnapshot : ModelSnapshot
+    [Migration("20211222152956_AddDateToProductWarrantyDataModel")]
+    partial class AddDateToProductWarrantyDataModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,7 +94,7 @@ namespace WarrantyRegistrationApp.Migrations
                     b.Property<string>("ProductSerialNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("WarrantyDate")
+                    b.Property<DateTime>("warrantyDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("ProdWarrantyId");

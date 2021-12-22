@@ -13,6 +13,6 @@ namespace WarrantyRegistrationApp.Models
         public int CustomerId { get; set; }
         public int ProductId { get; set; }
         public string ProductSerialNumber { get; set; }
-        public DateTime warrantyDate {get;set;}
+        public DateTime WarrantyDate {get;set;}
     }
 }
