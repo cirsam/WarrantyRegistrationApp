@@ -48,12 +48,6 @@ namespace WarrantyRegistrationApp.Repository
 
         public async Task<IEnumerable<TEntity>> GetBySerialNumberAsync(string serialNumber)
         {
-            Type t = _dbSet.GetType();
-
-            PropertyInfo prop = t.GetProperty("ProductSerialNumber");
-
-            var list = prop.GetValue(_dbSet,null);
-
             return await _dbSet.Where(a=>a.GetType().GetProperty("ProductSerialNumber").Equals(serialNumber)).ToListAsync();
         }
 
