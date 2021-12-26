@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -7,10 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using WarrantyRegistrationApp.Data;
 using WarrantyRegistrationApp.Models;
@@ -34,7 +37,6 @@ namespace WarrantyRegistrationApp
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
@@ -42,11 +44,29 @@ namespace WarrantyRegistrationApp
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            
+
             services.AddScoped<IRepository<Customer>, WarrantyRegistrationApp.Repository.Repository<Customer>>();
             services.AddScoped<IRepository<Product>, WarrantyRegistrationApp.Repository.Repository<Product>>();
             services.AddScoped<IRepository<ProductWarrantyData>, WarrantyRegistrationApp.Repository.Repository<ProductWarrantyData>>();
+            services.AddScoped<IRepository<Login>, WarrantyRegistrationApp.Repository.Repository<Login>>();
+
+            var key = Encoding.UTF8.GetBytes(Configuration["WarrantyReg_JWT:Key"]);
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = Configuration["WarrantyReg_JWT:IssuerUrl"],
+                        ValidAudience = Configuration["WarrantyReg_JWT:AudienceUrl"],
+                        IssuerSigningKey = new SymmetricSecurityKey(key)
+                    };
+                });
 
             services.AddControllersWithViews();
         }
@@ -65,6 +85,7 @@ namespace WarrantyRegistrationApp
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
