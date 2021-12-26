@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,7 @@ namespace WarrantyRegistrationApp.Controllers.Api
 
         // GET: api/ProductWarrantyAPI
         [HttpGet]
+        [Authorize(Roles = "Admins,Customers")]
         public async Task<ActionResult<IEnumerable<ProductWarrantyData>>> GetProductWarrantyDatas()
         {
             return await _repository.GetAllAsync();
@@ -35,6 +37,7 @@ namespace WarrantyRegistrationApp.Controllers.Api
 
         // GET: api/ProductWarrantyAPI/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "Customers")]
         public async Task<ActionResult<ProductWarrantyData>> GetProductWarrantyData(int id)
         {
             var productWarrantyData = await _repository.GetByIDAsync(id);
@@ -50,6 +53,7 @@ namespace WarrantyRegistrationApp.Controllers.Api
         // POST: api/ProductWarrantyAPI
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Customers")]
         public async Task<ActionResult<ProductWarrantyData>> RegisterNewProductWarranty(ProductWarrantyData productWarrantyData)
         {
             if (await IsProductWarrantyValid(productWarrantyData))
@@ -68,6 +72,7 @@ namespace WarrantyRegistrationApp.Controllers.Api
         // PUT: api/ProductWarrantyAPI/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admins,Customers")]
         public async Task<IActionResult> ExtendRegistedProductWarranty(int id, ProductWarrantyData productWarrantyData)
         {
 
@@ -120,6 +125,7 @@ namespace WarrantyRegistrationApp.Controllers.Api
 
         // DELETE: api/ProductWarrantyAPI/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admins")]
         public async Task<IActionResult> DeleteProductWarrantyData(int id)
         {
             var productWarrantyData = await _repository.GetByIDAsync(id);
