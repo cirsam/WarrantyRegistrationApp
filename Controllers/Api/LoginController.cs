@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -15,6 +16,8 @@ using System.Text;
 using System.Threading.Tasks;
 using WarrantyRegistrationApp.Models;
 using WarrantyRegistrationApp.Repository;
+
+//https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-6.0&tabs=visual-studio
 
 namespace WarrantyRegistrationApp.Controllers.Api
 {
@@ -40,14 +43,20 @@ namespace WarrantyRegistrationApp.Controllers.Api
         public async Task<IActionResult> Login([FromBody] Login login)
         {
             var user = Authenticate(login);
+            var passwordHash = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, login.Password);
 
-            if (user != null)
+            if (user == null)
             {
-                var token = await Generate(user);
-                return Ok(token);
+                return NotFound("User not found");
+            }
+            
+            if (passwordHash!=PasswordVerificationResult.Success)
+            {
+                return BadRequest("bad UserName Or PasswordMessage");
             }
 
-            return NotFound("User not found");
+            var token = await Generate(user);
+            return Ok(token);
         }
 
         private async Task<string> Generate(IdentityUser user)
@@ -90,6 +99,58 @@ namespace WarrantyRegistrationApp.Controllers.Api
             }
 
             return null;
+        }
+
+        [AllowAnonymous]
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] Register register)
+        {
+            try
+            {
+                var user = new IdentityUser { UserName = register.Username, Email = register.Email };
+                user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, register.Password);
+
+                var result = await _userManager.CreateAsync(user);
+                
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, "Customers");//All users are first added as customers
+                    
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var callbackUrl = $"https://{Request.Host}/api/login/ConfirmEmail?userId={user.Id}&code={code}";
+
+                    return Ok(callbackUrl);
+                }
+
+                return BadRequest("User already exist");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string userId,string code)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    return NotFound($"Unable to load user with id '{userId}'.");
+                }
+
+                user.EmailConfirmed = true;
+                await _userManager.UpdateAsync(user);
+
+                return Ok("Account comfirmed");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
     }
