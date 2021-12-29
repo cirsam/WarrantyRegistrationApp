@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -29,13 +30,14 @@ namespace WarrantyRegistrationApp.Controllers.Api
         private readonly IRepository<Login> _repository;
         private UserManager<IdentityUser> _userManager;
         private SignInManager<IdentityUser> _signInManager;
-
-        public LoginController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IRepository<Login> repository, IConfiguration config)
+        private readonly ILogger _logger;
+        public LoginController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IRepository<Login> repository, IConfiguration config, ILogger<LoginController> logger)
         {
             _config = config;
             _repository = repository;
             _userManager = userManager;
             _signInManager = signInManager;
+            _logger = logger;
         }
 
         [AllowAnonymous]
@@ -47,6 +49,8 @@ namespace WarrantyRegistrationApp.Controllers.Api
 
             if (user == null)
             {
+                _logger.LogWarning("User does not exist.");
+
                 return NotFound("User not found");
             }
             
@@ -56,6 +60,8 @@ namespace WarrantyRegistrationApp.Controllers.Api
             }
 
             var token = await Generate(user);
+            _logger.LogInformation("User is logged in.");
+
             return Ok(token);
         }
 
@@ -86,6 +92,7 @@ namespace WarrantyRegistrationApp.Controllers.Api
                             expires: now.AddMinutes(int.Parse(expires)),
                             signingCredentials: credentialsToken);
 
+            _logger.LogInformation("JWT token created.");
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
@@ -95,6 +102,8 @@ namespace WarrantyRegistrationApp.Controllers.Api
             var currentUser = _userManager.Users.FirstOrDefault(o => o.UserName.ToLower() == login.Username.ToLower());
             if (currentUser != null)
             {
+                _logger.LogInformation("User is autenticated.");
+
                 return currentUser;
             }
 
@@ -115,9 +124,17 @@ namespace WarrantyRegistrationApp.Controllers.Api
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, "Customers");//All users are first added as customers
-                    
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = $"https://{Request.Host}/api/login/ConfirmEmail?userId={user.Id}&code={code}";
+                    var callbackUrl = $"https://{Request.Host}/api/login/ConfirmEmail?userId={user.Id}";
+
+                    System.Net.Mail.MailMessage m = new System.Net.Mail.MailMessage(
+                             new System.Net.Mail.MailAddress("sender@mydomain.com", "Web Registration"),
+                             new System.Net.Mail.MailAddress(user.Email));
+                                 m.Subject = "Email confirmation";
+                                 m.Body = string.Format("Dear {0}, <BR/>Thank you for your registration, please click on the below link to complete your registration: <a href=\"{1}\" title=\"User Email Confirm\">{1}</a>",
+                                 user.UserName,callbackUrl);
+                                 m.IsBodyHtml = true;
+                         System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("smtp.mydomain.com");
+                         smtp.Credentials = new System.Net.NetworkCredential("sender@mydomain.com", "password");
 
                     return Ok(callbackUrl);
                 }
@@ -132,14 +149,14 @@ namespace WarrantyRegistrationApp.Controllers.Api
 
         [AllowAnonymous]
         [HttpGet("ConfirmEmail")]
-        public async Task<IActionResult> ConfirmEmail(string userId,string code)
+        public async Task<IActionResult> ConfirmEmail(string token)
         {
             try
             {
-                var user = await _userManager.FindByIdAsync(userId);
+                var user = await _userManager.FindByIdAsync(token);
                 if (user == null)
                 {
-                    return NotFound($"Unable to load user with id '{userId}'.");
+                    return NotFound($"Unable to load user with id '{token}'.");
                 }
 
                 user.EmailConfirmed = true;
@@ -150,6 +167,22 @@ namespace WarrantyRegistrationApp.Controllers.Api
             catch (Exception ex)
             {
                 return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("logout")]
+        public async Task<IActionResult> Logout(string returnUrl = null)
+        {
+            await _signInManager.SignOutAsync();
+            _logger.LogInformation("User logged out.");
+
+            if (returnUrl != null)
+            {
+                return Ok(returnUrl);
+            }
+            else
+            {
+                return RedirectToAction(); 
             }
         }
 
