@@ -186,5 +186,24 @@ namespace WarrantyRegistrationApp.Controllers.Api
             }
         }
 
+        [HttpPut("changePassword")]
+        public async Task<ActionResult> changePassword(UserModel userDto)
+        {
+            var user = await _userManager.FindByIdAsync(userDto.UserId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.PasswordHash = _userManager.PasswordHasher.HashPassword(user,userDto.Password);
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                return BadRequest("Password change failed");
+            }
+
+            return Ok("Password has been changed");
+        }
+
     }
 }
