@@ -35,22 +35,21 @@ namespace WarrantyRegistrationApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<WarrantyDataContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddScoped<IRepository<Customer>, WarrantyRegistrationApp.Repository.Repository<Customer>>();
-            services.AddScoped<IRepository<Product>, WarrantyRegistrationApp.Repository.Repository<Product>>();
-            services.AddScoped<IRepository<ProductWarrantyData>, WarrantyRegistrationApp.Repository.Repository<ProductWarrantyData>>();
-            services.AddScoped<IRepository<Login>, WarrantyRegistrationApp.Repository.Repository<Login>>();
+            services.AddScoped<IRepository<Customer>, Repository<Customer>>();
+            services.AddScoped<IRepository<Product>, Repository<Product>>();
+            services.AddScoped<IRepository<ProductWarrantyData>, Repository<ProductWarrantyData>>();
+            services.AddScoped<IRepository<Login>, Repository<Login>>();
 
             var key = Encoding.UTF8.GetBytes(Configuration["WarrantyReg_JWT:Key"]);
 
