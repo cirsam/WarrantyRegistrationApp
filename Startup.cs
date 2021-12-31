@@ -46,10 +46,13 @@ namespace WarrantyRegistrationApp
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddScoped<IRepository<Customer>, Repository<Customer>>();
-            services.AddScoped<IRepository<Product>, Repository<Product>>();
-            services.AddScoped<IRepository<ProductWarrantyData>, Repository<ProductWarrantyData>>();
-            services.AddScoped<IRepository<Login>, Repository<Login>>();
+            var getclasses = Assembly.GetExecutingAssembly().GetTypes().Where(a => a.Namespace == "WarrantyRegistrationApp.Models");
+
+            getclasses.ToList().ForEach(type =>
+            {
+                Type getObjectNameByNameSpace = Type.GetType(type.FullName);
+                services.AddScoped(typeof(IRepository<>).MakeGenericType(getObjectNameByNameSpace), typeof(Repository<>).MakeGenericType(getObjectNameByNameSpace));
+            });
 
             var key = Encoding.UTF8.GetBytes(Configuration["WarrantyReg_JWT:Key"]);
 
