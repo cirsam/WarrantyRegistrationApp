@@ -59,10 +59,12 @@ namespace WarrantyRegistrationApp.Controllers.Api
                 return BadRequest("bad UserName Or PasswordMessage");
             }
 
-            var token = await Generate(user);
+            var getToken = await Generate(user);
             _logger.LogInformation("User is logged in.");
 
-            return Ok(token);
+            var data = new { token = getToken, userId=user.Id,email=user.Email};
+
+            return Ok(data);
         }
 
         private async Task<string> Generate(IdentityUser user)

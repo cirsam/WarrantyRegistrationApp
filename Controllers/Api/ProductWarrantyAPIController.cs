@@ -26,14 +26,14 @@ namespace WarrantyRegistrationApp.Controllers.Api
             _repositoryProduct = repositoryProduct;
         }
 
-        // GET: api/ProductWarrantyAPI
+        // GET: api/ProductWarrantyAPI/customer/1
         [HttpGet]
+        [HttpGet("customer/{customerID}")]
         [Authorize(Roles = "Admins,Customers")]
-        public async Task<ActionResult<IEnumerable<ProductWarrantyData>>> GetProductWarrantyDatas()
+        public ActionResult<IEnumerable<ProductWarrantyData>> GetProductWarrantyDatas(string customerID)
         {
-            return await _repository.GetAllAsync();
+            return _repository.GetAllByCustomer(customerID).ToList();
         }
-
 
         // GET: api/ProductWarrantyAPI/5
         [HttpGet("{id}")]
@@ -110,9 +110,9 @@ namespace WarrantyRegistrationApp.Controllers.Api
 
         public async Task<string> IsProductWarrantyValid(ProductWarrantyData productWarrantyData)
         {
-            var productData = await _repositoryProduct.GetBySerialNumberAsync(productWarrantyData.ProductSerialNumber);//validate serial number
-            var customerData = await _repositoryCustomer.GetByIDAsync(productWarrantyData.CustomerId);//validate customer ID
-            var prodWarrantyData = await _repository.GetBySerialNumberAsync(productWarrantyData.ProductSerialNumber);//validate unique serial number
+            var productData = _repositoryProduct.GetBySerialNumber(productWarrantyData.ProductSerialNumber);//validate serial number
+            var customerData = _repositoryCustomer.GetByID(productWarrantyData.userId);//validate customer ID
+            var prodWarrantyData =  _repository.GetBySerialNumber(productWarrantyData.ProductSerialNumber);//validate unique serial number
 
             try
             {
