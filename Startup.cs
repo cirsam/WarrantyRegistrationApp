@@ -70,6 +70,8 @@ namespace WarrantyRegistrationApp
                     };
                 });
 
+            services.AddCors();
+
             services.AddControllersWithViews();
         }
 
@@ -95,6 +97,12 @@ namespace WarrantyRegistrationApp
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseCors(corsPolicyBuilder =>
+               corsPolicyBuilder.WithOrigins("http://localhost:3000")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+            );
 
             app.UseEndpoints(endpoints =>
             {

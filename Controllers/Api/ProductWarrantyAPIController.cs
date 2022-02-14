@@ -56,17 +56,18 @@ namespace WarrantyRegistrationApp.Controllers.Api
         [Authorize(Roles = "Customers")]
         public async Task<ActionResult<ProductWarrantyData>> RegisterNewProductWarranty(ProductWarrantyData productWarrantyData)
         {
-            if (await IsProductWarrantyValid(productWarrantyData))
+            var createWarrantyStatus = await IsProductWarrantyValid(productWarrantyData);
+
+            if (createWarrantyStatus == "ok")
             {
                 productWarrantyData.WarrantyDate = DateTime.Now.AddYears(5);
                 await _repository.InsertAsync(productWarrantyData);
-            }
-            else
-            {
-                return NoContent();
+
+                return CreatedAtAction("GetProductWarrantyData", new { id = productWarrantyData.ProdWarrantyId }, productWarrantyData);
             }
 
-            return CreatedAtAction("GetProductWarrantyData", new { id = productWarrantyData.ProdWarrantyId }, productWarrantyData);
+            return Problem(createWarrantyStatus);
+
         }
 
         // PUT: api/ProductWarrantyAPI/5
@@ -107,19 +108,36 @@ namespace WarrantyRegistrationApp.Controllers.Api
             return NoContent();
         }
 
-        public async Task<bool> IsProductWarrantyValid(ProductWarrantyData productWarrantyData)
+        public async Task<string> IsProductWarrantyValid(ProductWarrantyData productWarrantyData)
         {
             var productData = await _repositoryProduct.GetBySerialNumberAsync(productWarrantyData.ProductSerialNumber);//validate serial number
             var customerData = await _repositoryCustomer.GetByIDAsync(productWarrantyData.CustomerId);//validate customer ID
             var prodWarrantyData = await _repository.GetBySerialNumberAsync(productWarrantyData.ProductSerialNumber);//validate unique serial number
 
-            if (productData != null && customerData != null && prodWarrantyData == null)
+            try
             {
-                return true;
-            }
+                if (productData.Count() == 0)
+                {
+                    throw new Exception("product does not exist");
+                }
 
-            //if it gets here it mean the product is not warrantable
-            return false;
+                if (customerData == null)
+                {
+                    throw new Exception("customer does not exist in the system");
+                }
+
+                if (prodWarrantyData.Count() != 0)
+                {
+                    throw new Exception("product warranty already exist");
+                }
+
+                return "ok";
+                
+            }
+            catch(Exception e)
+            {
+                return e.Message;
+            }
         }
 
 

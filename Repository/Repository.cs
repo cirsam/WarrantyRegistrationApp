@@ -48,7 +48,17 @@ namespace WarrantyRegistrationApp.Repository
 
         public async Task<IEnumerable<TEntity>> GetBySerialNumberAsync(string serialNumber)
         {
-            return await _dbSet.Where(a=>a.GetType().GetProperty("ProductSerialNumber").Equals(serialNumber)).ToListAsync();
+            IList<TEntity> entities = new List<TEntity>();
+            foreach (var entity in _dbSet)
+            {
+                var entitySerialNumber = entity.GetType().GetProperty("ProductSerialNumber").GetValue(entity);
+                if (entitySerialNumber.ToString()==serialNumber)
+                {
+                    entities.Add(entity);
+                }
+            }
+
+            return entities;
         }
 
         public async Task<bool> IsExistsAsync(int? id)
