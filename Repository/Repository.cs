@@ -35,6 +35,37 @@ namespace WarrantyRegistrationApp.Repository
             return await query.ToListAsync();
         }
 
+        public ActionResult<IEnumerable<TEntity>> GetAllByCustomerAsync(string customerID)
+        {
+            //IQueryable<TEntity> query = _dbSet;
+            IList<TEntity> entities = new List<TEntity>();
+            foreach (var entity in _dbSet)
+            {
+                var entityCustomerId = entity.GetType().GetProperty("userId").GetValue(entity);
+                if (entityCustomerId.ToString() == customerID)
+                {
+                    entities.Add(entity);
+                }
+            }
+
+            return entities.ToList();
+        }
+
+        public IEnumerable<TEntity> GetAllByCustomer(string customerID)
+        {
+            IList<TEntity> entities = new List<TEntity>();
+            foreach (var entity in _dbSet)
+            {
+                var entityCustomerId = entity.GetType().GetProperty("userId").GetValue(entity);
+                if (entityCustomerId?.ToString() == customerID)
+                {
+                    entities.Add(entity);
+                }
+            }
+
+            return entities.ToList();
+        }
+
         public virtual TEntity GetByID(int? id)
         {
             return _dbSet.Find(id);
@@ -44,9 +75,31 @@ namespace WarrantyRegistrationApp.Repository
         {
             return await _dbSet.FindAsync(id);
         }
-        
+
+        public TEntity GetByID(string userId)
+        {
+            var entitySerialNumber = _dbSet.Where(a => a.GetType().GetProperty("userId").Equals(userId));
+
+            return _dbSet.Find(1);
+        }
+
 
         public async Task<IEnumerable<TEntity>> GetBySerialNumberAsync(string serialNumber)
+        {
+            IList<TEntity> entities = new List<TEntity>();
+            foreach (var entity in _dbSet)
+            {
+                var entitySerialNumber = entity.GetType().GetProperty("ProductSerialNumber").GetValue(entity);
+                if (entitySerialNumber.ToString() == serialNumber)
+                {
+                    entities.Add(entity);
+                }
+            }
+
+            return entities;
+        }
+
+        public IEnumerable<TEntity> GetBySerialNumber(string serialNumber)
         {
             IList<TEntity> entities = new List<TEntity>();
             foreach (var entity in _dbSet)

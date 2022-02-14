@@ -29,9 +29,9 @@ namespace WarrantyRegistrationApp.Controllers.Api
 
         // GET: api/CustomersAPI/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Customer>> GetCustomer(int id)
+        public async Task<ActionResult<Customer>> GetCustomer(string userId)
         {
-            var customer = await _repository.GetByIDAsync(id);
+            var customer = _repository.GetByID(userId);
 
             if (customer == null)
             {
@@ -81,9 +81,9 @@ namespace WarrantyRegistrationApp.Controllers.Api
 
         // DELETE: api/CustomersAPI/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCustomer(int id)
+        public async Task<IActionResult> DeleteCustomer(string userId)
         {
-            var customer = await _repository.GetByIDAsync(id);
+            var customer =  _repository.GetByID(userId);
             if (customer == null)
             {
                 return NotFound();
