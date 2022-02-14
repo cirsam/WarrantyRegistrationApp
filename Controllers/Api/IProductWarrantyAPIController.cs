@@ -8,6 +8,6 @@ namespace WarrantyRegistrationApp.Controllers.Api
 {
     public interface IProductWarrantyAPIController
     {
-        Task<bool> IsProductWarrantyValid(ProductWarrantyData productWarrantyData);
+        Task<string> IsProductWarrantyValid(ProductWarrantyData productWarrantyData);
     }
 }
